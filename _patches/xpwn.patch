@@ -1,0 +1,12 @@
+diff --git a/ipsw-patch/xpwntool.c b/ipsw-patch/xpwntool.c
+index 51f8af6..a170e9f 100644
+--- a/ipsw-patch/xpwntool.c
++++ b/ipsw-patch/xpwntool.c
+@@ -1,6 +1,7 @@
+ #include <stdio.h>
+ #include <string.h>
+ #include "xpwn/libxpwn.h"
++#include "xpwn/img3.h"
+ #include "xpwn/nor_files.h"
+ 
+ #define BUFFERSIZE (1024*1024)
