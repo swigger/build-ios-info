@@ -50,12 +50,14 @@ log_run(){
 
 cfgopts(){
 	case "$1" in
-		libplist)
-			echo "--without-cython"
+		libplist) echo "--without-cython" ;;
+		libipatcher)
+			if [ $(uname -s) = "Linux" ] ; then
+				echo "--without-iBoot64Patcher"
+			fi
 			;;
-		*)
-			true
-			;;
+		xpwn) echo "-DCMAKE_C_FLAGS_INIT=-fPIC" ;;
+		*) true ;;
 	esac
 }
 
@@ -76,6 +78,16 @@ gitopts(){
 	esac
 }
 
+hook-build(){
+	if [ $(uname -s) = "Linux" ] ; then
+		case "$1" in
+			libinsn|liboffsetfinder64)
+				touch .sw-installed
+				;;
+		esac
+	fi
+}
+
 do_build(){
 	if [ ! -d "$1" ] ; then
 		git clone $(gitopts $1) --recursive "$2"
@@ -84,6 +96,7 @@ do_build(){
 		fi
 	fi
 	pushd "$1" >/dev/null
+	hook-build "$1"
 	if [ -f .sw-installed ]; then
 		popd >/dev/null
 		return
@@ -97,7 +110,7 @@ do_build(){
 		elif [ -e autogen.sh ] ; then
 			log_run sw_cfg.log ./autogen.sh --prefix=$ROOT/INST $(cfgopts $1)
 		elif [ -f CMakeLists.txt ] ;then
-			log_run sw_cfg.log cmake -DCMAKE_INSTALL_PREFIX:PATH=$ROOT/INST .
+			log_run sw_cfg.log cmake -DCMAKE_INSTALL_PREFIX:PATH=$ROOT/INST $(cfgopts $1) .
 		else
 			echo "Unknown maker" >&2
 			false
