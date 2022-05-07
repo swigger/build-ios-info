@@ -35,10 +35,17 @@ log_run(){
 	LOGFILE="$1"
 	shift
 	echo $'\x1b[1;31m' "$@" $'\x1b[0m' >&2
-	script -q "$LOGFILE" "$@" >/dev/null 2>&1 || {
-		cat $LOGFILE
-		false
-	}
+	if [ $(uname -s) = "Linux" ] ; then
+		script -q "$LOGFILE" -ec "$*" >/dev/null 2>&1 || {
+			cat $LOGFILE
+			false
+		}
+	else
+		script -q "$LOGFILE" "$@" >/dev/null 2>&1 || {
+			cat $LOGFILE
+			false
+		}
+	fi
 }
 
 cfgopts(){
