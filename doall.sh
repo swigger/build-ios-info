@@ -16,10 +16,10 @@ https://github.com/1Conan/tsschecker.git
 https://github.com/lzfse/lzfse.git
 https://github.com/tihmstar/img4tool.git
 https://github.com/tihmstar/libinsn.git
-https://github.com/tihmstar/liboffsetfinder64.git
-https://github.com/planetbeing/xpwn.git
+https://github.com/Cryptiiiic/liboffsetfinder64.git
+https://github.com/nyuszika7h/xpwn.git
 https://github.com/Cryptiiiic/libipatcher.git
-https://github.com/Arna13/futurerestore.git
+https://github.com/futurerestore/futurerestore.git
 
 https://github.com/tihmstar/igetnonce.git
 https://github.com/tihmstar/noncestatistics.git
@@ -56,7 +56,6 @@ cfgopts(){
 				echo "--without-iBoot64Patcher"
 			fi
 			;;
-		xpwn) echo "-DCMAKE_C_FLAGS_INIT=-fPIC" ;;
 		*) true ;;
 	esac
 }
@@ -81,7 +80,7 @@ gitopts(){
 hook-build(){
 	if [ $(uname -s) = "Linux" ] ; then
 		case "$1" in
-			libinsn|liboffsetfinder64)
+			liboffsetfinder64)
 				touch .sw-installed
 				;;
 		esac

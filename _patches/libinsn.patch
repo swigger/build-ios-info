@@ -1,0 +1,48 @@
+diff --git a/include/libinsn/INSNexception.hpp b/include/libinsn/INSNexception.hpp
+index 9be74a5..29e54f3 100644
+--- a/include/libinsn/INSNexception.hpp
++++ b/include/libinsn/INSNexception.hpp
+@@ -15,15 +15,39 @@
+ 
+ namespace tihmstar {
+     class INSNexception : public tihmstar::exception{
+-        using exception::exception;
++	public:
++		INSNexception(const char *commit_count_str, const char *commit_sha_str, int line, const char *filename, const char *err ...)
++			:tihmstar::exception(commit_count_str, commit_sha_str, line, filename, "")
++		{
++			char* & m_err = *(char**) ((char*)this + sizeof(tihmstar::exception) - sizeof(char*));
++			if (err[0] || m_err[0]!=0)
++			{
++				free(m_err); m_err = nullptr;
++				va_list ap;
++				va_start(ap, err);
++				vasprintf(&m_err, err, ap);
++				va_end(ap);
++			}
++		}
+     };
+ 
+ //custom exceptions for makeing it easy to catch
+     class out_of_range : public INSNexception{
+-        using INSNexception::INSNexception;
++	public:
++		out_of_range(const char *commit_count_str, const char *commit_sha_str, int line, const char *filename, const char *err ...)
++			:INSNexception(commit_count_str, commit_sha_str, line, filename, "")
++		{
++			char* & m_err = *(char**) ((char*)this + sizeof(tihmstar::exception) - sizeof(char*));
++			if (err[0] || m_err[0]!=0)
++			{
++				free(m_err); m_err = nullptr;
++				va_list ap;
++				va_start(ap, err);
++				vasprintf(&m_err, err, ap);
++				va_end(ap);
++			}
++		}
+     };
+-
+-
+ };
+ 
+ #endif /* INSNexception_h */
