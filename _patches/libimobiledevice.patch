@@ -1,0 +1,13 @@
+diff --git a/src/restore.c b/src/restore.c
+index 591fd16..9f85fb0 100644
+--- a/src/restore.c
++++ b/src/restore.c
+@@ -287,7 +287,7 @@ LIBIMOBILEDEVICE_API restored_error_t restored_get_value(restored_client_t clien
+ 	}
+ 
+ 	*value = plist_copy(item);
+-	free(item);
++	// free(item); // NO! item is tied in cli->info, no free.
+ 	return RESTORE_E_SUCCESS;
+ }
+ 

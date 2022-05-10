@@ -103,9 +103,9 @@ do_build(){
 	echo "[1;32mBuilding $1[0m" >&2
 	git pull > /dev/null || true
 	
-	if [ ! -f .sw_configed ] ; then
+	if [ ! -f .sw-configed ] ; then
 		if [ -e configure ] ; then
-			log_run sw_cfg.log ./configure --prefix=$ROOT/INST $(cfgopts $1)
+			log_run sw_cfg.log ./configure  --prefix=$ROOT/INST $(cfgopts $1)
 		elif [ -e autogen.sh ] ; then
 			log_run sw_cfg.log ./autogen.sh --prefix=$ROOT/INST $(cfgopts $1)
 		elif [ -f CMakeLists.txt ] ;then
@@ -117,7 +117,7 @@ do_build(){
 			exit 1
 		fi
 		if [ -f Makefile ] ; then
-			touch .sw_configed
+			touch .sw-configed
 		fi
 	fi
 
@@ -139,9 +139,9 @@ makeall(){
 	mkdir -p "$ROOT/INST"
 	export PKG_CONFIG_PATH=$ROOT/INST/lib/pkgconfig
 	export LD_LIBRARY_PATH=$ROOT/INST/lib
-	export LDFLAGS=-L$ROOT/INST/lib
-	export CFLAGS=-I$ROOT/INST/include
-	export CXXFLAGS=-I$ROOT/INST/include
+	export LDFLAGS="-L$ROOT/INST/lib -g"
+	export CFLAGS="-I$ROOT/INST/include -g"
+	export CXXFLAGS="-I$ROOT/INST/include -g"
 
 	for i in $(links) ; do
 		do_build $(basename $i .git) $i
@@ -149,10 +149,20 @@ makeall(){
 }
 
 clean_all(){
-	for i in $(links) ; do
-		rm -fr $(basename $i .git)
-	done
-	rm -fr INST
+	if [ "$1" = "-f" ] ; then
+		for i in $(links) ; do
+			rm -fr $(basename $i .git)
+		done
+		rm -fr INST
+	else
+		for i in $(links) ; do
+			pushd $ROOT/$(basename $i .git) >/dev/null
+			rm -f .sw-*
+			make dist-clean || true
+			popd >/dev/null
+		done
+		rm -fr INST
+	fi
 }
 
 dry_del_usrlocal(){
@@ -165,7 +175,8 @@ dry_del_usrlocal(){
 if [ "$1" = "dry_del_usrlocal" ] ; then
 	dry_del_usrlocal
 elif [ "$1" = "clean" ] ; then
-	clean_all
+	shift
+	clean_all "$@"
 else
 	makeall
 fi

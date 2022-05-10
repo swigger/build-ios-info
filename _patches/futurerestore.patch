@@ -1,0 +1,20 @@
+diff --git a/external/tsschecker/tsschecker/tsschecker.c b/external/tsschecker/tsschecker/tsschecker.c
+index 9cc3009..7266452 100644
+--- a/external/tsschecker/tsschecker/tsschecker.c
++++ b/external/tsschecker/tsschecker/tsschecker.c
+@@ -421,6 +421,7 @@ char *getFirmwareJson(){
+     fseek(f, 0, SEEK_SET);
+     char *fJson = malloc(fsize + 1);
+     fread(fJson, fsize, 1, f);
++    fJson[fsize] = 0;
+     fclose(f);
+     return fJson;
+ }
+@@ -461,6 +462,7 @@ char *getOtaJson(){
+     fseek(f, 0, SEEK_SET);
+     char *fJson = malloc(fsize + 1);
+     fread(fJson, fsize, 1, f);
++    fJson[fsize] = 0;
+     fclose(f);
+     return fJson;
+ }
